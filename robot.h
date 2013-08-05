@@ -16,6 +16,6 @@
 #ifndef _ROBOT_H
 #define _ROBOT_H
 
-void robPrintMessage(void);
+void robPrintMessage(int num);
 
 #endif

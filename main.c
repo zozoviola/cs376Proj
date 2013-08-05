@@ -10,10 +10,27 @@
  */
 #include "robot.h"
 
-int main(void)
+/**
+ * main()
+ *
+ * The main entrypoint of the program.
+ * 
+ * @param command line arguments.
+ * 
+ * @returns nothing.
+ */
+int main(int argc, const char * argv[])
 {
+  // Check the command line arguments.
+  if(argc != 2) {
+    printf("usage: %s <number> \n", argv[0]);
+    return -1;
+  }
 
-  robPrintMessage();
+  // Convert the command-line argument to a number.
+  int num = atoi(argv[1]);
+
+  robPrintMessage(num);
 
   return 0;
 }

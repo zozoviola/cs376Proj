@@ -14,15 +14,25 @@
 /**
  * robPrintMessage
  *
- * This function prints the message, "I really love robots!"
+ * This function prints the message, "I really* love robots!"
  *
- * @param none
+ * @param num the number of times the message should print the word
+ * "really"
  *
  * @returns none 
  */
-void robPrintMessage(void)
+void robPrintMessage(int num)
 {
-  printf("I really love robots!\n");
+  int i = 0;
+
+  printf("I ");
+
+  for(i; i < num; i++)
+    {
+      printf("really ");
+    }
+
+  printf("love robots!\n");
 
   return;
 }
