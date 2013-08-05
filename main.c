@@ -8,11 +8,12 @@
  * @since August 2013
  *
  */
-#include <stdio.h>
+#include "robot.h"
 
 int main(void)
 {
-  printf("I really love robots!\n");
+
+  robPrintMessage();
 
   return 0;
 }
