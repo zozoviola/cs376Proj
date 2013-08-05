@@ -10,6 +10,16 @@
  */
 #include "robot.h"
 
+
+/**
+ * main()
+ *
+ * The main entrypoint of the program.
+ * 
+ * @param none
+ * 
+ * @returns nothing.
+ */
 int main(void)
 {
 
