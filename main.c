@@ -30,6 +30,8 @@ int main(int argc, const char * argv[])
   // Convert the command-line argument to a number.
   int num = atoi(argv[1]);
 
+  robPrintAscii();
+
   robPrintMessage(num);
 
   return 0;
