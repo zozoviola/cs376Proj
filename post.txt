@@ -1,0 +1,322 @@
+This is a long post about Git.  It assumes that the reader already knows that Git is an open source distributed version control system.
+
+Part 1.  The obligatory part about creating a git repository on a local machine and committing local changes to it.
+
+Let us suppose that I have a small bit of code I have been working on in a directory called robots.  The directory has four files in it:
+
+robots$ ls
+README.txt main.c  makefile robots.out
+
+I am ready to create my first git repository for this code:
+
+robots $ git init
+Initialized empty Git repository in /Users/crenshaw/robots/.git/
+
+Now I have a local git repository for my code, but it currently has no files in it.   
+
+robots $ git status
+# On branch master
+#
+# Initial commit
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+# README.txt
+# main.c
+# makefile
+# robots.out
+nothing added to commit but untracked files present (use "git add" to track)
+
+I need to tell my git repository which files I would like to track.  In general, I will never want to keep track of object files or executable files, so I'm going to configure git to always ignore files ending in .o and .out.  To do so, I create a .gitignore file in the robots directory.  This file contains a set of regular expressions that state the files that, in general, I never want git to track:
+
+*.o
+*.out
+
+Now when I use the command git status to look at the status of my repository, it does not report that robots.out is an untracked file.  Git is ignoring the file.
+
+robots $ git status
+# On branch master
+#
+# Initial commit
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	.gitignore
+#	README.txt
+#	main.c
+#	makefile
+nothing added to commit but untracked files present (use "git add" to track)
+
+I want to track all these files.  So I use the git add command to start tracking the files.
+
+robots $ git add .
+robots $ git status
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#   (use "git rm --cached <file>..." to unstage)
+#
+#	new file:   .gitignore
+#	new file:   README.txt
+#	new file:   main.c
+#	new file:   makefile
+#
+
+They are now being tracked, but they haven't been committed.  To commit a file means to take a snapshot of that file and save that snapshot in the repository.  In order to commit a file in git, I must stage it.  I want to commit all of the files that are listed in the status report above.  So I can stage and commit my files all at once.  I use git commit to commit the files, and the -a flag to stage all of the files that are currently being tracked and have changes.  I use the -m flag to write a useful message about the files being committed.
+
+robots $ git commit -a -m "The initial commit of the robots example source code for Software Engineering."
+[master (root-commit) 75bca81] The initial commit of the robots example source code for Software Engineering.
+ 4 files changed, 32 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 README.txt
+ create mode 100644 main.c
+ create mode 100644 makefile
+
+Now git reports that everything is up to date.
+
+robots $ git status
+# On branch master
+nothing to commit, working directory clean
+
+I'm going to make a change to a file.  After I do so, I'm ready to commit my change.
+
+robots $ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   main.c
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+
+One nice thing about Git is that it often gives you helpful suggestions on commands that you might want to use.  See the note about using git commit -a.  That's what I want to do.  Again, note my useful commit message.  
+
+robots $ git commit -a -m "Added additional text to the output of main.c.  Updated the comments in the header to reflect this change.  Program now states 'I really love robots.'"
+[master 7e6aa31] Added additional text to the output of main.c.  Updated the comments in the header to reflect this change.  Program now states 'I really love robots.'
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Part 2. In which I need to fix my commit comments because, in a hot-headed moment of frustration, I wrote an f-bomb in the commit message and that's not particularly useful.
+
+Yeah, I have a temper.  In trying to get something quickly committed just before lunch, I was angry and made the following commit:
+
+robots $ git commit -a -m "JUST F***ING WORK."
+[master ca122b3] JUST F***ING WORK.
+ 5 files changed, 59 insertions(+), 5 deletions(-)
+ create mode 100644 robot.c
+ create mode 100644 robot.h
+
+Nope.  Not useful.    
+
+Git has an amend command that allows you to change the commit message of the most previous commit.
+
+robots $ git commit --amend
+
+This pulls up an editor that allows me to alter the message.  By default, this editor is vi, so hit the letter i on the keyboard to go into edit mode.  When you are done editing, hit : + w + q + Enter.
+
+Parts 1 and 2 make it seem like git is super easy to use.  And it is, if I am working on code all by myself on a single machine.  Git gets trickier to use when I open up this repository by maintaining a remote repository and inviting multiple developers to add features to my code. 
+
+*
+
+Part 3. In which I create a new remote repository and copy my local repository to it so that the world may download my awesome open source.
+
+I open a browser and point it at 
+
+http://code.google.com/
+
+I click on the text near the little green plus at the bottom left of the page to “Create a new project.”   I fill out the form, making sure to choose Git as the version control system.  I choose GNU GPL v2 as my license, because that is the one license I have read the whole way through that makes sense to me.
+
+After I fill out the form, I click on the button “Create project”.
+
+Now I am at the newly-created repository’s home page.  I click on the Administer tab and select "Sharing" so that I can add my friend B. as a Project committer.  I click on the button “Save changes.”  My browser goes to the main page of my new empty remote repository.  The URL of this page is the location of my remote repository.
+
+https://code.google.com/p/i-love-robots/
+
+I want to copy my local repository to my remote one.  This makes my work public; since its hosted on Google code, anyone can download it but only people I specify under "Sharing" may alter the code.
+
+The act of copying my local repository to a remote one is called pushing.
+
+To set up push functionality for my repository, I first configure my push settings on my local machine:
+
+robots $ git config --global push.default simple
+
+This means that when I invoke the command git push, Git will only copy my current branch to my remote repository.  There are more details on this configuration in the Git docs.
+
+Now I want to tell my local repository the location of the remote repository I want to use whenever I invoke git push:
+
+robots $ git remote add origin https://code.google.com/p/i-love-robots
+
+I can tell that this command worked by looking in the file ~/robots/.git/config.  It now contains:
+
+[remote "origin"]
+        url = https://code.google.com/p/i-love-robots
+        fetch = +refs/heads/*:refs/remotes/origin/*
+
+
+Finally, I am going to push my code to the remote repository.  This is the first time I am pushing to the remote, so I need to configure git so that it considers this remote repository my "upstream branch."
+
+$ git push --set-upstream origin master
+Counting objects: 16, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (16/16), 2.33 KiB, done.
+Total 16 (delta 4), reused 0 (delta 0)
+remote: Scanning pack: 100% (16/16), done.
+remote: Storing objects: 100% (16/16), done.
+remote: Processing commits: 100% (3/3), done.
+To https://code.google.com/p/i-love-robots
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+
+I go to my Google Code site for my project and I can see my code.
+
+
+Part 4.  I make some changes locally, and when I try to push, I get this weird error about ! [rejected].
+
+I add one more feature to my program and commit it locally.  Note my useful commit message.
+
+robots $ git commit -a -m "Added command line parameters to the software.  The usage is now './robots.out <number>' where number is the number of times the program prints the word 'really'."
+[master 0680720] Added command line parameters to the software.  The usage is now './robots.out <number>' where number is the number of times the program prints the word 'really'.
+ 3 files changed, 34 insertions(+), 7 deletions(-)
+
+I use the git status command to asses the state of my local repository versus my remote one.
+
+robots $ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+nothing to commit, working directory clean
+
+Again, Git is trying to help me out.  It reports that I am "ahead" of the remote repository, and that I can use git push to copy my local changes to the remote repository.  So I do it; this time I can just simply use the git push command.  
+
+$ git push
+To https://code.google.com/p/i-love-robots
+ ! [rejected]        master -> master (fetch first)
+error: failed to push some refs to 'https://code.google.com/p/i-love-robots'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first merge the remote changes (e.g.,
+hint: 'git pull') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+Woah.  That definitely did not work.  It looks like my friend B. already committed some changes to the remote repository.  Before I can push my changes, I must synchronize with the remote repository, and get my friend's changes.  I do this using git pull.  If my friend B. and I altered different parts of the source, git will automatically merge all of our changes.  Then I would commit the merge locally and push my latest commits to the remote.
+
+Unfortunately, it looks like B. and I changed the same part of the code, and we have a merge conflict:
+
+robots $ git pull
+remote: Counting objects: 3, done.
+remote: Finding sources: 100% (3/3), done.
+remote: Total 3 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From https://code.google.com/p/i-love-robots
+   f62e31a..2487a6a  master     -> origin/master
+Auto-merging main.c
+CONFLICT (content): Merge conflict in main.c
+Automatic merge failed; fix conflicts and then commit the result.
+
+I have to fix the merge conflict.  The git status command tells me where the conflicts are:
+
+robots $ git status
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 1 and 1 different commit each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# You have unmerged paths.
+#   (fix conflicts and run "git commit")
+#
+# Unmerged paths:
+#   (use "git add <file>..." to mark resolution)
+#
+#	both modified:      main.c
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+
+The conflict is in main.c.  When I open the file, the conflicts are marked.  The code after the keyword <<<<<<< HEAD is the code that is checked into the remote repository.  The code after the line 
+>>>>>>> 2487a6ae036cea369a8dbeade78df8d1014825db is the code that is in my local repository.  It looks like B and I both added a function comment header to main(), but our function headers are different.  It also looks like I added command line arguments to main(), but my friend B. did not.
+/**                                                                    * main.c                                                                *                                                                      * The main entrypoint of the "I really love robots" program.  The      * program prints the phrase "I really love robots!" to the screen.      *                                                                      * @author Tanya L. Crenshaw                                            * @since August 2013                                                    *                                                                      */
+#include "robot.h"
+<<<<<<< HEAD
+=======
+>>>>>>> 2487a6ae036cea369a8dbeade78df8d1014825db
+/**                                                                      * main()                                                                *                                                                      * The main entrypoint of the program.                                  *                                                                     <<<<<<< HEAD                                                            * @param command line arguments.                                        *                                                                      * @returns nothing.                                                    */
+int main(int argc, const char * argv[])
+=======
+ * @param none
+ *
+ * @returns nothing.
+ */
+int main(void)
+>>>>>>> 2487a6ae036cea369a8dbeade78df8d1014825db
+
+I alter main.c so that it reflects a coherent set of changes made by both B. and myself, and I remove all the <<<<<<< HEAD and >>>>>>> 2487a6ae036cea369a8dbeade78df8d1014825db.  I confirm that my code still works with this new main.c, and I commit my changes.
+
+robots $ git commit -a -m "Merged my recent changes to the command line arguments with the master branch at the remote."
+[master 6336ae6] Merged my recent changes to the command line arguments with the master branch at the remote.
+
+And I push.
+
+robots $ git push
+Counting objects: 12, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 1.21 KiB, done.
+Total 6 (delta 3), reused 0 (delta 0)
+remote: Scanning pack: 100% (6/6), done.
+remote: Storing objects: 100% (6/6), done.
+remote: Processing commits: 100% (2/2), done.
+To https://code.google.com/p/i-love-robots
+   2487a6a..6336ae6  master -> master
+
+
+Part 5.  I want to develop a new feature, but I don't want to disrupt the working code while I am developing it.
+
+When a git repository is created, it is created by default with a single branch called master.   This can be confirmed by using the git branch command on a fairly new repository.  This command lists all the branches in the repository and stars the one that is currently checked out.
+
+robots $ git branch
+* master
+ 
+With any source control repository, it is desirable that the code in the master branch is a stable, working version.  Conventionally, incremental changes for new almost-working features should not be committed to the master branch.  
+
+For my robots program, I am planning a change.  Instead of just printing out "I really love robots", I want the program to draw a little bit of ASCII art.  I am going to make a new branch, develop my feature on that branch, and then merge my branch with the master branch.  
+
+This all might seem like a lot of work just to add some ASCII art, but this is typical industrial practice. When multiple developers are working on multiple different features, it is typical for each developer to have her own branch or one branch for each feature she is developing.
+
+First, I create a new branch, called ascii.
+
+robots $ git branch ascii
+robots $ git branch
+  ascii
+* master
+
+To work from my new branch, I do the following:
+
+$ git checkout ascii
+Switched to branch 'ascii'
+
+Now, any changes I commit will happen on my ascii branch and cannot be seen from the master branch.  I can use the git commit commands just as I did before; they will all happen on ascii.
+
+Part 6.  I made a new local branch and I want to push it to the remote.
+
+
+
+Part 7. My friend and co-developer wants to track my new branch.
+
+
+Part 8.  I am ready to merge all my work on my branch onto the master branch.
+
+Part 9. I started making some changes, but they are all lame and I need to get rid of my changes and revert back to working code.
+
+I started making some changes to the code in my repository, but for whatever reason, I don't want them. 
+
+Part 10. I want to work with an older version of the code.
+
+
+
+
+
