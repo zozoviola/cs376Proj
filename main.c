@@ -9,7 +9,9 @@
  *
  */
 #include "robot.h"
+
 #include "hino17.h"
+#include "hensler17.h"
 
 /**
  * main()
@@ -36,9 +38,10 @@ int main(int argc, const char * argv[])
 
   robPrintMessage(num);
 
+
   // New stuff whohoo
   hino17();
-
+  hensler17();
 
   return 0;
 }
