@@ -9,6 +9,7 @@
  *
  */
 #include "robot.h"
+#include "hino17.h"
 
 /**
  * main()
@@ -27,12 +28,17 @@ int main(int argc, const char * argv[])
     return -1;
   }
 
+
   // Convert the command-line argument to a number.
   int num = atoi(argv[1]);
 
   robPrintAscii();
 
   robPrintMessage(num);
+
+  // New stuff whohoo
+  hino17();
+
 
   return 0;
 }
