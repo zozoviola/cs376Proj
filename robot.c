@@ -49,9 +49,28 @@ void robPrintMessage(int num)
  */
 void robPrintAscii(void)
 {
-  printf("    i_i    \n"
-	 "   [O_-]   \n"
-	 "  /|___|\\  \n"
-         "   d   b   "); 
+  int loopMax = 3;
+  int i = 0;
 
+  for(i; i<loopMax; i++){
+    int a;    
+ for(a=0; a<i; a++){
+      printf("\t");
+    }
+
+       printf("    i_i    \n");
+ for(a=0; a<i; a++){
+      printf("\t");
+    }
+ printf("   [O_-]   \n");
+ for(a=0; a<i; a++){
+      printf("\t");
+    }
+ printf( "  /|___|\\  \n");
+ for(a=0; a<i; a++){
+      printf("\t");
+    }
+ printf( "   d   b  \n ");
+ 
+  }
 }
