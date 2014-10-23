@@ -25,11 +25,16 @@
 int main(int argc, const char * argv[])
 {
   // Check the command line arguments.
+  if(argc == 1) {
+    robPrintAscii();
+    printf("\n");
+    return 0;
+  }
+  
   if(argc != 2) {
-    printf("usage: %s <number> \n", argv[0]);
+    printf("Error: Wrong number of parameters\n");
     return -1;
   }
-
 
   // Convert the command-line argument to a number.
   int num = atoi(argv[1]);
